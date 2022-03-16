@@ -114,7 +114,6 @@ struct WelcomeSheetPageView: View {
                             
                             Text(page.mainButtonTitle)
                                 .font(.headline)
-                                .foregroundColor(.white)
                                 .padding()
                         }
                         .frame(width: isiPad ? iPadSheetDimensions.width / 1.7 : nil)
@@ -133,7 +132,6 @@ struct WelcomeSheetPageView: View {
                             
                             Text(page.mainButtonTitle)
                                 .font(.headline)
-                                .foregroundColor(.white)
                                 .padding()
                         }
                         .frame(width: isiPad ? iPadSheetDimensions.width / 1.7 : nil)
