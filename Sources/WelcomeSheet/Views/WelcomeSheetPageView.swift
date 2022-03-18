@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, *)
 struct WelcomeSheetPageView: View {
     @Environment(\.showingSheet) var showingSheet
     
@@ -16,13 +17,8 @@ struct WelcomeSheetPageView: View {
     let isiPad = UIDevice.current.userInterfaceIdiom == .pad
     
     var body: some View {
-        if #available(iOS 14.0, *) {
-            content
-                .ignoresSafeArea(.all, edges: .top)
-        } else {
-            content
-                .edgesIgnoringSafeArea(.top)
-        }
+        content
+            .ignoresSafeArea(.all, edges: .top)
     }
     
     var content: some View {
@@ -32,24 +28,14 @@ struct WelcomeSheetPageView: View {
                     HStack {
                         Spacer()
                         
-                        if #available(iOS 15.0, *) {
-                            Text(page.title)
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .lineSpacing(8)
-                                .multilineTextAlignment(.center)
-                                .padding(.top, iPhoneDimensions.topPadding - (isiPad ? 15 : 0))
-                                .fixedSize(horizontal: false, vertical: true)
-                                .accessibilityHeading(.h1)
-                        } else {
-                            Text(page.title)
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .lineSpacing(8)
-                                .multilineTextAlignment(.center)
-                                .padding(.top, iPhoneDimensions.topPadding - (isiPad ? 15 : 0))
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                        Text(page.title)
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .lineSpacing(8)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, iPhoneDimensions.topPadding - (isiPad ? 15 : 0))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityHeading(.h1)
                         
                         Spacer()
                     }
@@ -61,7 +47,8 @@ struct WelcomeSheetPageView: View {
                                     .renderingMode(.template)
                                     .resizable()
                                     .scaledToFit()
-                                    .foregroundColor(row.accentColor ?? Color.accentColor)
+                                    .foregroundColor(row.accentColor)
+                                    .symbolRenderingMode(.monochrome)
                                     .frame(width: 37, height: 37)
                                     .alignmentGuide(.midIcons) { d in d[HorizontalAlignment.center] }
                                     .accessibility(hidden: true)
@@ -114,6 +101,7 @@ struct WelcomeSheetPageView: View {
                             
                             Text(page.mainButtonTitle)
                                 .font(.headline)
+                                .foregroundColor(.white)
                                 .padding()
                         }
                         .frame(width: isiPad ? iPadSheetDimensions.width / 1.7 : nil)
@@ -132,6 +120,7 @@ struct WelcomeSheetPageView: View {
                             
                             Text(page.mainButtonTitle)
                                 .font(.headline)
+                                .foregroundColor(.white)
                                 .padding()
                         }
                         .frame(width: isiPad ? iPadSheetDimensions.width / 1.7 : nil)

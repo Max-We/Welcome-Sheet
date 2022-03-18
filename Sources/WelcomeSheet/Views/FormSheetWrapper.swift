@@ -8,7 +8,7 @@ class ModalUIHostingController<Content>: UIHostingController<Content>, UIPopover
     
     required init?(coder: NSCoder) { fatalError("") }
     
-    init(onDismiss: @escaping () -> Void, isSlideToDismissDisabled: Bool, rootView: Content) {
+    init(onDismiss: @escaping () -> Void, isSlideToDismissDisabled: Bool, darkMode: Bool, rootView: Content) {
         self.onDismiss = onDismiss
         self.isDismissedBySliding = false
         super.init(rootView: rootView)
@@ -16,6 +16,9 @@ class ModalUIHostingController<Content>: UIHostingController<Content>, UIPopover
         modalPresentationStyle = .formSheet
         presentationController?.delegate = self
         isModalInPresentation = isSlideToDismissDisabled
+        if darkMode {
+            UIApplication.shared.windows.filter{$0.isKeyWindow}.first!.overrideUserInterfaceStyle = .dark
+        }
     }
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
@@ -29,6 +32,7 @@ class ModalUIViewController<Content: View>: UIViewController {
     
     let isPresented: Bool
     let isSlideToDismissDisabled: Bool
+    let darkMode: Bool
     let content: () -> Content
     let onDismiss: () -> Void
     var hostVC: ModalUIHostingController<Content>
@@ -37,19 +41,20 @@ class ModalUIViewController<Content: View>: UIViewController {
     
     required init?(coder: NSCoder) { fatalError("") }
     
-    init(isPresented: Bool = false, onDismiss: @escaping () -> Void, isSlideToDismissDisabled: Bool, content: @escaping () -> Content) {
+    init(isPresented: Bool = false, onDismiss: @escaping () -> Void, isSlideToDismissDisabled: Bool, darkMode: Bool, content: @escaping () -> Content) {
         self.isSlideToDismissDisabled = isSlideToDismissDisabled
+        self.darkMode = darkMode
         self.shouldUpdate = isPresented
         self.isPresented = isPresented
         self.onDismiss = onDismiss
         self.content = content
-        self.hostVC = ModalUIHostingController(onDismiss: onDismiss, isSlideToDismissDisabled: isSlideToDismissDisabled, rootView: content())
+        self.hostVC = ModalUIHostingController(onDismiss: onDismiss, isSlideToDismissDisabled: isSlideToDismissDisabled, darkMode: darkMode, rootView: content())
         super.init(nibName: nil, bundle: nil)
     }
     
     func show() {
         guard isViewDidAppear else { return }
-        self.hostVC = ModalUIHostingController(onDismiss: onDismiss, isSlideToDismissDisabled: isSlideToDismissDisabled, rootView: content())
+        self.hostVC = ModalUIHostingController(onDismiss: onDismiss, isSlideToDismissDisabled: isSlideToDismissDisabled, darkMode: darkMode, rootView: content())
         shouldUpdate = true
         present(hostVC, animated: true)
     }
@@ -88,6 +93,7 @@ struct FormSheet<Content: View> : UIViewControllerRepresentable {
     
     let onDismiss: () -> Void
     let isSlideToDismissDisabled: Bool
+    let darkMode: Bool
     let content: () -> Content
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<FormSheet<Content>>) -> ModalUIViewController<Content> {
@@ -96,7 +102,7 @@ struct FormSheet<Content: View> : UIViewControllerRepresentable {
             self.show = false
         }
         
-        let vc = ModalUIViewController(isPresented: show, onDismiss: onDismiss, isSlideToDismissDisabled: isSlideToDismissDisabled, content: content)
+        let vc = ModalUIViewController(isPresented: show, onDismiss: onDismiss, isSlideToDismissDisabled: isSlideToDismissDisabled, darkMode: darkMode, content: content)
         return vc
     }
     
@@ -110,7 +116,7 @@ struct FormSheet<Content: View> : UIViewControllerRepresentable {
 }
 
 extension View {
-    func formSheet<Content: View>(isPresented: Binding<Bool>, onDismiss: @escaping () -> Void, isSlideToDismissDisabled: Bool, @ViewBuilder content: @escaping () -> Content) -> some View {
-        self.background(FormSheet(show: isPresented, onDismiss: onDismiss, isSlideToDismissDisabled: isSlideToDismissDisabled, content: content))
+    func formSheet<Content: View>(isPresented: Binding<Bool>, onDismiss: @escaping () -> Void, isSlideToDismissDisabled: Bool, darkMode: Bool, @ViewBuilder content: @escaping () -> Content) -> some View {
+        self.background(FormSheet(show: isPresented, onDismiss: onDismiss, isSlideToDismissDisabled: isSlideToDismissDisabled, darkMode: darkMode, content: content))
     }
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 /// A type that describes welcome sheet page row's content.
+@available(iOS 15.0, *)
 public struct WelcomeSheetPageRow: Identifiable, Decodable {
     private enum CodingKeys : String, CodingKey {
         case title
@@ -29,7 +30,6 @@ public struct WelcomeSheetPageRow: Identifiable, Decodable {
     
     /// Color used for an image. When set to nil, uses default accent colour.
     public var accentColor: Color?
-    
     
     /// Creates welcome sheet page row with given image, title and content.
     public init(image: Image, title: String, content: String) {
